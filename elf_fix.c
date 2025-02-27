@@ -27,7 +27,19 @@ int main(int argc, char **argv) {
         close(fd);
         return 1;
     }
-
+    if (read(fd, &new_byte, 1) != 1) {
+        perror("Ошибка записи байта");
+        close(fd);
+        return 1;
+    }
+    printf("Байт по смещению 0x%lx был 0x%02x\n", offset, new_byte);
+    
+    if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
+        perror("Ошибка позиционирования в файле");
+        close(fd);
+        return 1;
+    }
+    new_byte = (unsigned char)strtoul(argv[3], NULL, 0); // Новый байт
     // Записываем новый байт
     if (write(fd, &new_byte, 1) != 1) {
         perror("Ошибка записи байта");
